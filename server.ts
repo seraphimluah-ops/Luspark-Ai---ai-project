@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '25mb' }));
 app.use('/api', apiRouter);
 
 // Serve static frontend in production
@@ -19,6 +19,11 @@ app.get('*', (_req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`LuraSpark AI server running on port ${PORT}`);
-});
+// Only listen locally if not on Vercel serverless
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`LuraSpark AI server running on port ${PORT}`);
+  });
+}
+
+export default app;
